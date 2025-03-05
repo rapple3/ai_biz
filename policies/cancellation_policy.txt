@@ -1,0 +1,25 @@
+
+# SkyWay Airlines Cancellation Policy
+
+## Refundable Tickets
+- Full refund if cancelled more than 24 hours before departure
+- Cancellation fee of $200 applies if cancelled within 24 hours of departure
+- No-shows will be charged the full ticket price
+
+## Non-Refundable Tickets
+- No refund available
+- Value of ticket can be applied to future travel within 12 months, minus $200 change fee
+- Changes must be made prior to scheduled departure
+
+## Flight Disruptions
+- If flight is cancelled by SkyWay Airlines: Full refund or rebooking on next available flight
+- If flight is delayed more than 3 hours: Option to rebook or receive credit
+- If flight is delayed more than 5 hours: Option for full refund
+
+## Loyalty Member Benefits
+- Platinum members: Change fees waived
+- Gold members: Reduced change fee of $100
+- Silver members: Reduced change fee of $150
+
+## 24-Hour Flexible Booking Policy
+- All tickets can be cancelled within 24 hours of booking for a full refund, provided the booking was made at least 7 days prior to departure

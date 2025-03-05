@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Customer Service Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .chat-header {
+            background-color: #4285f4;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .back-button {
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .header-title {
+            flex-grow: 1;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .profile-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #c2dbff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .profile-button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-icon {
+            color: #4285f4;
+            font-size: 24px;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            position: relative;
+        }
+        
+        .sender-name {
+            font-size: 12px;
+            margin-bottom: 4px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .user-message {
+            margin-left: auto;
+            background-color: #4285f4;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 18px 18px 4px 18px;
+        }
+        
+        .bot-message {
+            background-color: #e9e9eb;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 18px 18px 18px 4px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px 15px;
+            background-color: #f5f5f5;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .add-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #4285f4;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: white;
+            font-size: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+        }
+        
+        .escalation-panel {
+            background-color: #fff3e0;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        /* Profile selection modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .close-button {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .customer-option {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .customer-option:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #c2dbff;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4285f4;
+            font-weight: bold;
+        }
+        
+        .customer-details {
+            flex-grow: 1;
+        }
+        
+        .customer-name {
+            font-weight: 500;
+        }
+        
+        .customer-info {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .loading-dots {
+            display: inline-block;
+        }
+        
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <a href="#" class="back-button">&#8249;</a>
+            <div class="header-title">SkyWay Airlines Support</div>
+            <div class="profile-button" id="profile-button">
+                <div class="profile-icon">👤</div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">
+                <div class="sender-name">SkyWay Assistant</div>
+                Hello! I'm your airline virtual assistant. How can I help you today?
+            </div>
+        </div>
+        
+        <div class="escalation-panel" id="escalation-panel">
+            <h3>Agent Handoff Summary</h3>
+            <div id="escalation-content"></div>
+        </div>
+        
+        <div class="chat-input">
+            <div class="add-button">+</div>
+            <input type="text" id="user-input" placeholder="Type a message..." autofocus>
+        </div>
+    </div>
+    
+    <!-- Profile Selection Modal -->
+    <div class="modal" id="profile-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Select Customer Profile</div>
+                <div class="close-button" id="close-modal">&times;</div>
+            </div>
+            <div class="customer-option" data-id="">
+                <div class="customer-avatar">?</div>
+                <div class="customer-details">
+                    <div class="customer-name">Anonymous User</div>
+                    <div class="customer-info">No customer information</div>
+                </div>
+            </div>
+            <div class="customer-option" data-id="C001">
+                <div class="customer-avatar">JD</div>
+                <div class="customer-details">
+                    <div class="customer-name">Jane Doe</div>
+                    <div class="customer-info">Gold Member • FL001 (NYC → LAX)</div>
+                </div>
+            </div>
+            <div class="customer-option" data-id="C002">
+                <div class="customer-avatar">JS</div>
+                <div class="customer-details">
+                    <div class="customer-name">John Smith</div>
+                    <div class="customer-info">Silver Member • FL002 (LAX → CHI)</div>
+                </div>
+            </div>
+            <div class="customer-option" data-id="C003">
+                <div class="customer-avatar">AB</div>
+                <div class="customer-details">
+                    <div class="customer-name">Alice Brown</div>
+                    <div class="customer-info">Standard Member • FL003 (MIA → DFW)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const userInput = document.getElementById('user-input');
+            const escalationPanel = document.getElementById('escalation-panel');
+            const escalationContent = document.getElementById('escalation-content');
+            const profileButton = document.getElementById('profile-button');
+            const profileModal = document.getElementById('profile-modal');
+            const closeModal = document.getElementById('close-modal');
+            const customerOptions = document.querySelectorAll('.customer-option');
+            
+            let chatHistory = [];
+            let selectedCustomerId = '';
+            let selectedCustomerName = 'Anonymous';
+            
+            // Open profile modal
+            profileButton.addEventListener('click', function() {
+                profileModal.style.display = 'flex';
+            });
+            
+            // Close profile modal
+            closeModal.addEventListener('click', function() {
+                profileModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === profileModal) {
+                    profileModal.style.display = 'none';
+                }
+            });
+            
+            // Handle customer selection
+            customerOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    selectedCustomerId = this.getAttribute('data-id');
+                    
+                    // Update profile button
+                    const customerName = this.querySelector('.customer-name').textContent;
+                    selectedCustomerName = customerName;
+                    
+                    if (selectedCustomerId) {
+                        const initials = this.querySelector('.customer-avatar').textContent;
+                        profileButton.innerHTML = `<div class="customer-avatar">${initials}</div>`;
+                        
+                        // Add system message about customer selection
+                        const message = `Now chatting as ${customerName}`;
+                        addSystemMessage(message);
+                    } else {
+                        profileButton.innerHTML = `<div class="profile-icon">👤</div>`;
+                        
+                        // Add system message about anonymous mode
+                        addSystemMessage('Now chatting anonymously');
+                    }
+                    
+                    profileModal.style.display = 'none';
+                });
+            });
+            
+            // Handle sending messages
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message) {
+                    // Add user message to chat
+                    addMessage(message, 'user');
+                    userInput.value = '';
+                    
+                    // Add to chat history
+                    chatHistory.push({role: 'user', content: message});
+                    
+                    // Call the backend API
+                    callChatAPI(message);
+                }
+            }
+            
+            function callChatAPI(userMessage) {
+                // Show typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.classList.add('message', 'bot-message', 'typing-indicator');
+                typingIndicator.innerHTML = `
+                    <div class="sender-name">SkyWay Assistant</div>
+                    Typing<span class="loading-dots"></span>
+                `;
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Prepare the request data
+                const requestData = {
+                    customer_id: selectedCustomerId,
+                    message: userMessage,
+                    chat_history: chatHistory
+                };
+                
+                // Call the backend API
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Add bot response to chat
+                    addMessage(data.response, 'bot');
+                    
+                    // Add to chat history
+                    chatHistory.push({role: 'assistant', content: data.response});
+                    
+                    // Handle escalation if needed
+                    if (data.needs_escalation) {
+                        escalationContent.innerHTML = data.structured_summary;
+                        escalationPanel.style.display = 'block';
+                    } else {
+                        escalationPanel.style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Show error message
+                    addMessage("Sorry, I'm having trouble connecting right now. Please try again later.", 'bot');
+                    console.error('Error:', error);
+                });
+            }
+            
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                
+                if (sender === 'user') {
+                    messageElement.classList.add('user-message');
+                    messageElement.textContent = message;
+                } else {
+                    messageElement.classList.add('bot-message');
+                    messageElement.innerHTML = `
+                        <div class="sender-name">SkyWay Assistant</div>
+                        ${message}
+                    `;
+                }
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addSystemMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.style.textAlign = 'center';
+                messageElement.style.margin = '10px 0';
+                messageElement.style.fontSize = '12px';
+                messageElement.style.color = '#666';
+                messageElement.textContent = message;
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>

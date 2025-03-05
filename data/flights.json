@@ -1,0 +1,34 @@
+[
+  {
+    "flight_id": "FL001",
+    "origin": "NYC",
+    "destination": "LAX",
+    "departure": "2025-03-04 10:00",
+    "status": "On Time",
+    "aircraft": "Boeing 737-800",
+    "gate": "A12",
+    "terminal": "T1"
+  },
+  {
+    "flight_id": "FL002",
+    "origin": "LAX",
+    "destination": "CHI",
+    "departure": "2025-03-04 12:30",
+    "status": "Delayed",
+    "delay_minutes": 45,
+    "aircraft": "Airbus A320",
+    "gate": "B8",
+    "terminal": "T2"
+  },
+  {
+    "flight_id": "FL003",
+    "origin": "MIA",
+    "destination": "DFW",
+    "departure": "2025-03-04 15:45",
+    "status": "Cancelled",
+    "cancellation_reason": "Weather conditions",
+    "aircraft": "Boeing 787",
+    "gate": "C5",
+    "terminal": "T3"
+  }
+] 

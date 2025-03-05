@@ -1,0 +1,30 @@
+
+# SkyWay Airlines Loyalty Program
+
+## Membership Tiers
+- Standard: Entry level, no minimum miles required
+- Silver: 25,000 miles or 30 flight segments per calendar year
+- Gold: 50,000 miles or 60 flight segments per calendar year
+- Platinum: 100,000 miles or 100 flight segments per calendar year
+
+## Miles Earning
+- Economy class: 1 mile per mile flown
+- Business class: 1.5 miles per mile flown
+- First class: 2 miles per mile flown
+- Partner airlines: Varies by partner and fare class
+
+## Miles Redemption
+- Domestic flights: Starting at 25,000 miles round trip
+- International flights: Starting at 60,000 miles round trip
+- Upgrades: Starting at 15,000 miles per segment
+- Miles expire after 24 months of inactivity
+
+## Tier Benefits
+- Silver: Priority check-in, 1 free checked bag, 25% bonus miles
+- Gold: Silver benefits plus priority boarding, 2 free checked bags, 50% bonus miles
+- Platinum: Gold benefits plus lounge access, 3 free checked bags, 100% bonus miles, guaranteed availability
+
+## Family Pooling
+- Up to 8 family members can pool miles
+- Primary account holder must be at least 18 years old
+- All members earn tier status based on combined activity

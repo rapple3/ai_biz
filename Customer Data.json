@@ -1,0 +1,239 @@
+[
+  {
+    "customer_id": "C001",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "phone": "+1-555-123-4567",
+    "loyalty_tier": "Gold",
+    "loyalty_points": 75000,
+    "flight_id": "FL001",
+    "booking_reference": "ABC123",
+    "special_requests": "Vegetarian meal",
+    "travel_history": [
+      {"date": "2024-12-10", "route": "NYC-LAX", "flight_id": "FL245"},
+      {"date": "2024-11-05", "route": "LAX-NYC", "flight_id": "FL246"},
+      {"date": "2024-10-22", "route": "NYC-LHR", "flight_id": "FL789"}
+    ]
+  },
+  {
+    "customer_id": "C002",
+    "name": "John Smith",
+    "email": "john@example.com",
+    "phone": "+1-555-987-6543",
+    "loyalty_tier": "Silver",
+    "loyalty_points": 42000,
+    "flight_id": "FL002",
+    "booking_reference": "DEF456",
+    "special_requests": "Window seat",
+    "travel_history": [
+      {"date": "2024-11-15", "route": "LAX-CHI", "flight_id": "FL112"},
+      {"date": "2024-09-20", "route": "CHI-LAX", "flight_id": "FL113"}
+    ]
+  },
+  {
+    "customer_id": "C003",
+    "name": "Alice Brown",
+    "email": "alice@example.com",
+    "phone": "+1-555-456-7890",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 12500,
+    "flight_id": "FL003",
+    "booking_reference": "GHI789",
+    "special_requests": "Wheelchair assistance",
+    "travel_history": [
+      {"date": "2024-10-05", "route": "MIA-DFW", "flight_id": "FL334"}
+    ]
+  },
+  {
+    "customer_id": "C004",
+    "name": "Robert Chen",
+    "email": "robert@example.com",
+    "phone": "+1-555-222-3333",
+    "loyalty_tier": "Platinum",
+    "loyalty_points": 120000,
+    "flight_id": "FL004",
+    "booking_reference": "JKL012",
+    "special_requests": "Extra legroom",
+    "travel_history": [
+      {"date": "2024-12-01", "route": "SFO-NRT", "flight_id": "FL501"},
+      {"date": "2024-11-25", "route": "NRT-SFO", "flight_id": "FL502"},
+      {"date": "2024-10-15", "route": "SFO-LHR", "flight_id": "FL503"},
+      {"date": "2024-10-08", "route": "LHR-SFO", "flight_id": "FL504"}
+    ]
+  },
+  {
+    "customer_id": "C005",
+    "name": "Maria Garcia",
+    "email": "maria@example.com",
+    "phone": "+1-555-444-5555",
+    "loyalty_tier": "Gold",
+    "loyalty_points": 68000,
+    "flight_id": "FL005",
+    "booking_reference": "MNO345",
+    "special_requests": "Infant bassinet",
+    "travel_history": [
+      {"date": "2024-11-10", "route": "MIA-MAD", "flight_id": "FL601"},
+      {"date": "2024-10-20", "route": "MAD-MIA", "flight_id": "FL602"},
+      {"date": "2024-09-05", "route": "MIA-MEX", "flight_id": "FL603"}
+    ]
+  },
+  {
+    "customer_id": "C006",
+    "name": "David Wilson",
+    "email": "david@example.com",
+    "phone": "+1-555-666-7777",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 8000,
+    "flight_id": "FL006",
+    "booking_reference": "PQR678",
+    "special_requests": "Aisle seat",
+    "travel_history": [
+      {"date": "2024-11-30", "route": "ATL-DEN", "flight_id": "FL701"}
+    ]
+  },
+  {
+    "customer_id": "C007",
+    "name": "Sarah Johnson",
+    "email": "sarah@example.com",
+    "phone": "+1-555-888-9999",
+    "loyalty_tier": "Silver",
+    "loyalty_points": 35000,
+    "flight_id": "FL007",
+    "booking_reference": "STU901",
+    "special_requests": "Gluten-free meal",
+    "travel_history": [
+      {"date": "2024-12-05", "route": "BOS-ORD", "flight_id": "FL801"},
+      {"date": "2024-11-15", "route": "ORD-BOS", "flight_id": "FL802"},
+      {"date": "2024-10-10", "route": "BOS-DCA", "flight_id": "FL803"}
+    ]
+  },
+  {
+    "customer_id": "C008",
+    "name": "Michael Patel",
+    "email": "michael@example.com",
+    "phone": "+1-555-111-2222",
+    "loyalty_tier": "Platinum",
+    "loyalty_points": 150000,
+    "flight_id": "FL008",
+    "booking_reference": "VWX234",
+    "special_requests": "Pet in cabin",
+    "travel_history": [
+      {"date": "2024-12-15", "route": "JFK-LHR", "flight_id": "FL901"},
+      {"date": "2024-12-01", "route": "LHR-JFK", "flight_id": "FL902"},
+      {"date": "2024-11-20", "route": "JFK-CDG", "flight_id": "FL903"},
+      {"date": "2024-11-10", "route": "CDG-JFK", "flight_id": "FL904"},
+      {"date": "2024-10-25", "route": "JFK-DXB", "flight_id": "FL905"}
+    ]
+  },
+  {
+    "customer_id": "C009",
+    "name": "Emma Thompson",
+    "email": "emma@example.com",
+    "phone": "+1-555-333-4444",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 5000,
+    "flight_id": "FL009",
+    "booking_reference": "YZA567",
+    "special_requests": "Assistance for unaccompanied minor",
+    "travel_history": [
+      {"date": "2024-11-05", "route": "SEA-PDX", "flight_id": "FL110"}
+    ]
+  },
+  {
+    "customer_id": "C010",
+    "name": "James Lee",
+    "email": "james@example.com",
+    "phone": "+1-555-555-6666",
+    "loyalty_tier": "Silver",
+    "loyalty_points": 30000,
+    "flight_id": "FL010",
+    "booking_reference": "BCD890",
+    "special_requests": "Diabetic meal",
+    "travel_history": [
+      {"date": "2024-12-10", "route": "SFO-HNL", "flight_id": "FL210"},
+      {"date": "2024-11-25", "route": "HNL-SFO", "flight_id": "FL211"},
+      {"date": "2024-10-15", "route": "SFO-SEA", "flight_id": "FL212"}
+    ]
+  },
+  {
+    "customer_id": "C011",
+    "name": "Olivia Martinez",
+    "email": "olivia@example.com",
+    "phone": "+1-555-777-8888",
+    "loyalty_tier": "Gold",
+    "loyalty_points": 82000,
+    "flight_id": "FL011",
+    "booking_reference": "EFG123",
+    "special_requests": "Kosher meal",
+    "travel_history": [
+      {"date": "2024-12-05", "route": "LAX-SYD", "flight_id": "FL301"},
+      {"date": "2024-11-15", "route": "SYD-LAX", "flight_id": "FL302"},
+      {"date": "2024-10-20", "route": "LAX-AKL", "flight_id": "FL303"},
+      {"date": "2024-10-10", "route": "AKL-LAX", "flight_id": "FL304"}
+    ]
+  },
+  {
+    "customer_id": "C012",
+    "name": "William Taylor",
+    "email": "william@example.com",
+    "phone": "+1-555-999-0000",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 15000,
+    "flight_id": "FL012",
+    "booking_reference": "HIJ456",
+    "special_requests": "Hearing impaired assistance",
+    "travel_history": [
+      {"date": "2024-11-30", "route": "DFW-CUN", "flight_id": "FL401"},
+      {"date": "2024-11-23", "route": "CUN-DFW", "flight_id": "FL402"}
+    ]
+  },
+  {
+    "customer_id": "C013",
+    "name": "Sophia Kim",
+    "email": "sophia@example.com",
+    "phone": "+1-555-222-1111",
+    "loyalty_tier": "Platinum",
+    "loyalty_points": 135000,
+    "flight_id": "FL013",
+    "booking_reference": "KLM789",
+    "special_requests": "Seafood meal",
+    "travel_history": [
+      {"date": "2024-12-15", "route": "ORD-ICN", "flight_id": "FL501"},
+      {"date": "2024-12-01", "route": "ICN-ORD", "flight_id": "FL502"},
+      {"date": "2024-11-10", "route": "ORD-HKG", "flight_id": "FL503"},
+      {"date": "2024-10-25", "route": "HKG-ORD", "flight_id": "FL504"},
+      {"date": "2024-10-10", "route": "ORD-NRT", "flight_id": "FL505"}
+    ]
+  },
+  {
+    "customer_id": "C014",
+    "name": "Daniel Rodriguez",
+    "email": "daniel@example.com",
+    "phone": "+1-555-444-3333",
+    "loyalty_tier": "Silver",
+    "loyalty_points": 45000,
+    "flight_id": "FL014",
+    "booking_reference": "NOP012",
+    "special_requests": "Muslim meal",
+    "travel_history": [
+      {"date": "2024-12-10", "route": "MIA-BOG", "flight_id": "FL601"},
+      {"date": "2024-11-20", "route": "BOG-MIA", "flight_id": "FL602"},
+      {"date": "2024-10-15", "route": "MIA-LIM", "flight_id": "FL603"}
+    ]
+  },
+  {
+    "customer_id": "C015",
+    "name": "Ava Williams",
+    "email": "ava@example.com",
+    "phone": "+1-555-666-5555",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 9500,
+    "flight_id": "FL015",
+    "booking_reference": "QRS345",
+    "special_requests": "Visually impaired assistance",
+    "travel_history": [
+      {"date": "2024-11-25", "route": "ATL-MCO", "flight_id": "FL701"},
+      {"date": "2024-11-18", "route": "MCO-ATL", "flight_id": "FL702"}
+    ]
+  }
+]

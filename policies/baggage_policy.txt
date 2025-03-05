@@ -1,0 +1,26 @@
+
+# SkyWay Airlines Baggage Policy
+
+## Carry-on Baggage
+- All passengers are allowed one (1) carry-on bag and one (1) personal item.
+- Maximum dimensions for carry-on: 22" x 14" x 9" (56 x 36 x 23 cm)
+- Maximum dimensions for personal item: 18" x 14" x 8" (45 x 35 x 20 cm)
+- Items must fit in overhead bin or under the seat in front of you
+
+## Checked Baggage Allowance
+- Standard passengers: First checked bag $30, Second checked bag $40
+- Silver members: First checked bag free, Second checked bag $40
+- Gold members: Two checked bags free
+- Platinum members: Three checked bags free
+- Maximum weight per bag: 50 lbs (23 kg)
+- Maximum dimensions: 62 linear inches (158 cm) total
+
+## Overweight/Oversized Baggage
+- 51-70 lbs: $100 additional fee
+- 71-100 lbs: $200 additional fee
+- Oversized (63-80 linear inches): $100 additional fee
+
+## Special Items
+- Sports equipment: Special rules apply, see website for details
+- Musical instruments: Can be carried on if they fit overhead or can be checked
+- Mobility devices: Free of charge, do not count toward baggage allowance

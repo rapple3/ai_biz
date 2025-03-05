@@ -1,0 +1,38 @@
+[
+  {
+    "customer_id": "C001",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "phone": "+1-555-123-4567",
+    "flight_id": "FL001",
+    "loyalty_tier": "Gold",
+    "loyalty_points": 75000,
+    "booking_reference": "ABC123",
+    "seat": "12A",
+    "special_requests": "Vegetarian meal"
+  },
+  {
+    "customer_id": "C002",
+    "name": "John Smith",
+    "email": "john@example.com",
+    "phone": "+1-555-987-6543",
+    "flight_id": "FL002",
+    "loyalty_tier": "Silver",
+    "loyalty_points": 35000,
+    "booking_reference": "DEF456",
+    "seat": "18C",
+    "special_requests": "Extra legroom"
+  },
+  {
+    "customer_id": "C003",
+    "name": "Alice Brown",
+    "email": "alice@example.com",
+    "phone": "+1-555-456-7890",
+    "flight_id": "FL003",
+    "loyalty_tier": "Standard",
+    "loyalty_points": 12000,
+    "booking_reference": "GHI789",
+    "seat": "24F",
+    "special_requests": "Wheelchair assistance"
+  }
+] 
