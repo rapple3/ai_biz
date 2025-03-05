@@ -7,12 +7,41 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage, AIMessage
 from policy_retrieval_langchain import PolicyRetrieverLangChain
+import tempfile
 
-# Create necessary directories if they don't exist
-if not os.path.exists('policies'):
-    os.makedirs('policies')
-if not os.path.exists('data'):
-    os.makedirs('data')
+# Create a temporary directory for files if we're in a serverless environment
+if not os.path.exists('data') or not os.access('data', os.W_OK):
+    temp_dir = tempfile.gettempdir()
+    POLICIES_DIR = os.path.join(temp_dir, 'policies')
+    DATA_DIR = os.path.join(temp_dir, 'data')
+    
+    if not os.path.exists(POLICIES_DIR):
+        os.makedirs(POLICIES_DIR)
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+        
+    # Copy sample data to temp directory if needed
+    if not os.path.exists(os.path.join(DATA_DIR, 'flights.json')):
+        # Include your sample data directly in the code
+        FLIGHTS_DATA = [
+            {"flight_id": "FL001", "origin": "NYC", "destination": "LAX", "departure": "2025-03-04 10:00", "status": "On Time"},
+            {"flight_id": "FL002", "origin": "LAX", "destination": "CHI", "departure": "2025-03-04 12:30", "status": "Delayed"},
+            {"flight_id": "FL003", "origin": "MIA", "destination": "DFW", "departure": "2025-03-04 15:45", "status": "Cancelled"}
+        ]
+        CUSTOMERS_DATA = [
+            {"customer_id": "C001", "name": "Jane Doe", "email": "jane@example.com", "flight_id": "FL001", "loyalty_tier": "Gold"},
+            {"customer_id": "C002", "name": "John Smith", "email": "john@example.com", "flight_id": "FL002", "loyalty_tier": "Silver"},
+            {"customer_id": "C003", "name": "Alice Brown", "email": "alice@example.com", "flight_id": "FL003", "loyalty_tier": "Standard"}
+        ]
+        
+        # Write to temp directory
+        with open(os.path.join(DATA_DIR, 'flights.json'), 'w') as f:
+            json.dump(FLIGHTS_DATA, f)
+        with open(os.path.join(DATA_DIR, 'customers.json'), 'w') as f:
+            json.dump(CUSTOMERS_DATA, f)
+else:
+    POLICIES_DIR = 'policies'
+    DATA_DIR = 'data'
 
 # Load environment variables
 load_dotenv()
@@ -26,10 +55,10 @@ policy_retriever = PolicyRetrieverLangChain()
 # Load data from JSON files
 def load_data():
     try:
-        with open('data/flights.json', 'r') as f:
+        with open(os.path.join(DATA_DIR, 'flights.json'), 'r') as f:
             flights = json.load(f)
         
-        with open('data/customers.json', 'r') as f:
+        with open(os.path.join(DATA_DIR, 'customers.json'), 'r') as f:
             customers = json.load(f)
         
         return flights, customers
@@ -194,3 +223,7 @@ def chat():
 
 if __name__ == '__main__':
     app.run(debug=True)
+else:
+    # This is for Vercel serverless deployment
+    # Vercel expects a variable named 'app' to be the WSGI application
+    app = app

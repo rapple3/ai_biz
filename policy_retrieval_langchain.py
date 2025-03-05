@@ -3,14 +3,38 @@ from langchain_text_splitters import MarkdownTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 import os
+import tempfile
 
 class PolicyRetrieverLangChain:
-    def __init__(self, policy_dir='policies'):
+    def __init__(self, policy_dir=None):
+        if policy_dir is None:
+            if not os.path.exists('policies') or not os.access('policies', os.W_OK):
+                temp_dir = tempfile.gettempdir()
+                policy_dir = os.path.join(temp_dir, 'policies')
+                
+                if not os.path.exists(policy_dir):
+                    os.makedirs(policy_dir)
+                
+                # Create sample policy files if they don't exist
+                self.create_sample_policies(policy_dir)
+            else:
+                policy_dir = 'policies'
+        
         self.policy_dir = policy_dir
         self.embeddings = OpenAIEmbeddings()
         self.text_splitter = MarkdownTextSplitter(chunk_size=500, chunk_overlap=50)
         self.vector_store = None
         self.initialize_vector_store()
+        
+    def create_sample_policies(self, policy_dir):
+        # Create some basic policy files for the serverless environment
+        baggage_policy = "# SkyWay Airlines Baggage Policy\n\nAll passengers are allowed one carry-on bag and one personal item. Gold members get two free checked bags."
+        cancellation_policy = "# SkyWay Airlines Cancellation Policy\n\nFull refunds are available for cancellations made 24 hours before departure."
+        
+        with open(os.path.join(policy_dir, 'baggage_policy.txt'), 'w') as f:
+            f.write(baggage_policy)
+        with open(os.path.join(policy_dir, 'cancellation_policy.txt'), 'w') as f:
+            f.write(cancellation_policy)
         
     def load_policies(self):
         """Load all policy documents from the policy directory."""
