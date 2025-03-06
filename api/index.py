@@ -3,8 +3,6 @@ import json
 from flask import Flask, request, jsonify, render_template
 import openai
 import tempfile
-import faiss
-import numpy as np
 from datetime import datetime
 import sys
 import pkg_resources
