@@ -1,8 +1,2 @@
 flask
-pandas
-python-dotenv
-langchain
-langchain-openai
-langchain-community
-faiss-cpu
-scikit-learn
+openai
