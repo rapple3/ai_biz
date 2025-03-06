@@ -1,12 +1,11 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
 import os
 import json
-import pandas as pd
-from datetime import datetime
+from flask import Flask, request, jsonify
 import openai
 import tempfile
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+import faiss
+import numpy as np
+from datetime import datetime
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -31,28 +30,34 @@ try:
         os.makedirs(DATA_DIR)
 except FileExistsError:
     pass  # Directory already exists, which is fine
-    
+
 # Create sample policy files - with error handling
-baggage_policy = "# SkyWay Airlines Baggage Policy\n\nAll passengers are allowed one carry-on bag and one personal item. Gold members get two free checked bags."
-cancellation_policy = "# SkyWay Airlines Cancellation Policy\n\nFull refunds are available for cancellations made 24 hours before departure."
+POLICIES = {
+    "baggage_policy": "# SkyWay Airlines Baggage Policy\n\nAll passengers are allowed one carry-on bag and one personal item. Gold members get two free checked bags. Silver members get one free checked bag. Standard members must pay for all checked bags. Checked bags must not exceed 50 pounds (23 kg) and must not exceed 62 inches (157 cm) when adding length + width + height. Overweight or oversized bags will incur additional fees.",
+    
+    "cancellation_policy": "# SkyWay Airlines Cancellation Policy\n\nFull refunds are available for cancellations made 24 hours before departure. Cancellations made less than 24 hours before departure are eligible for a flight credit only. Gold members can cancel up to 2 hours before departure for a full refund. No-shows will not receive a refund or credit. Flight credits must be used within one year of issue.",
+    
+    "loyalty_program": "# SkyWay Airlines Loyalty Program\n\nSkyWay Airlines offers three loyalty tiers: Standard, Silver, and Gold. Silver status is achieved after 25,000 miles flown in a calendar year. Gold status is achieved after 50,000 miles flown in a calendar year. Silver members receive priority boarding, one free checked bag, and 25% bonus miles. Gold members receive priority boarding, two free checked bags, lounge access, and 50% bonus miles. Miles expire after 18 months of inactivity.",
+    
+    "flight_changes": "# SkyWay Airlines Flight Change Policy\n\nFlight changes can be made up to 2 hours before departure. Change fees apply based on fare class and loyalty tier. Gold members can change flights without fees. Silver members receive a 50% discount on change fees. Standard members pay full change fees. Same-day flight changes are available for a reduced fee of $75 for all members."
+}
 
 try:
-    if not os.path.exists(os.path.join(POLICIES_DIR, 'baggage_policy.txt')):
-        with open(os.path.join(POLICIES_DIR, 'baggage_policy.txt'), 'w') as f:
-            f.write(baggage_policy)
-    
-    if not os.path.exists(os.path.join(POLICIES_DIR, 'cancellation_policy.txt')):
-        with open(os.path.join(POLICIES_DIR, 'cancellation_policy.txt'), 'w') as f:
-            f.write(cancellation_policy)
+    for policy_name, content in POLICIES.items():
+        file_path = os.path.join(POLICIES_DIR, f"{policy_name}.txt")
+        if not os.path.exists(file_path):
+            with open(file_path, 'w') as f:
+                f.write(content)
 except Exception as e:
     print(f"Error creating policy files: {e}")
-    
+
 # Sample data
 FLIGHTS_DATA = [
     {"flight_id": "FL001", "origin": "NYC", "destination": "LAX", "departure": "2025-03-04 10:00", "status": "On Time"},
     {"flight_id": "FL002", "origin": "LAX", "destination": "CHI", "departure": "2025-03-04 12:30", "status": "Delayed"},
     {"flight_id": "FL003", "origin": "MIA", "destination": "DFW", "departure": "2025-03-04 15:45", "status": "Cancelled"}
 ]
+
 CUSTOMERS_DATA = [
     {"customer_id": "C001", "name": "Jane Doe", "email": "jane@example.com", "flight_id": "FL001", "loyalty_tier": "Gold"},
     {"customer_id": "C002", "name": "John Smith", "email": "john@example.com", "flight_id": "FL002", "loyalty_tier": "Silver"},
@@ -60,56 +65,62 @@ CUSTOMERS_DATA = [
 ]
 
 # Write to temp directory
-with open(os.path.join(DATA_DIR, 'flights.json'), 'w') as f:
-    json.dump(FLIGHTS_DATA, f)
-with open(os.path.join(DATA_DIR, 'customers.json'), 'w') as f:
-    json.dump(CUSTOMERS_DATA, f)
+try:
+    with open(os.path.join(DATA_DIR, 'flights.json'), 'w') as f:
+        json.dump(FLIGHTS_DATA, f)
+    with open(os.path.join(DATA_DIR, 'customers.json'), 'w') as f:
+        json.dump(CUSTOMERS_DATA, f)
+except Exception as e:
+    print(f"Error writing data files: {e}")
 
-# Simple policy retriever using TF-IDF
-class SimplePolicy:
-    def __init__(self, policy_dir):
-        self.policy_dir = policy_dir
-        self.policies = {}
-        self.load_policies()
-        self.vectorizer = TfidfVectorizer()
+# Policy retriever using OpenAI embeddings and FAISS
+class PolicyRetriever:
+    def __init__(self, policies):
+        self.policies = policies
+        self.policy_texts = list(policies.values())
+        self.policy_names = list(policies.keys())
         
-        # Fit vectorizer on all policy content
-        all_content = list(self.policies.values())
-        if all_content:
-            self.vectorizer.fit(all_content)
+        # Create embeddings for all policies
+        self.embeddings = self._get_embeddings(self.policy_texts)
+        
+        # Create FAISS index
+        self.dimension = len(self.embeddings[0])
+        self.index = faiss.IndexFlatL2(self.dimension)
+        self.index.add(np.array(self.embeddings).astype('float32'))
     
-    def load_policies(self):
-        for filename in os.listdir(self.policy_dir):
-            if filename.endswith('.txt'):
-                file_path = os.path.join(self.policy_dir, filename)
-                with open(file_path, 'r') as f:
-                    content = f.read()
-                    policy_name = filename.replace('_', ' ').replace('.txt', '')
-                    self.policies[policy_name] = content
+    def _get_embeddings(self, texts):
+        """Get embeddings for a list of texts using OpenAI API"""
+        try:
+            response = openai.embeddings.create(
+                model="text-embedding-3-small",
+                input=texts
+            )
+            return [item.embedding for item in response.data]
+        except Exception as e:
+            print(f"Error getting embeddings: {e}")
+            # Return zero embeddings as fallback
+            return [[0.0] * 1536 for _ in texts]  # 1536 is the dimension of text-embedding-3-small
     
     def get_relevant_policies(self, query, top_n=2):
-        if not self.policies:
-            return []
-            
-        # Transform the query
-        query_vector = self.vectorizer.transform([query])
+        """Find the most relevant policies for a query"""
+        # Get embedding for the query
+        query_embedding = self._get_embeddings([query])[0]
         
+        # Search the FAISS index
+        D, I = self.index.search(np.array([query_embedding]).astype('float32'), top_n)
+        
+        # Return the relevant policies
         results = []
-        for policy_name, content in self.policies.items():
-            # Transform content
-            content_vector = self.vectorizer.transform([content])
-            
-            # Calculate similarity
-            similarity = cosine_similarity(query_vector, content_vector)[0][0]
-            
-            if similarity > 0.1:  # Threshold for relevance
-                results.append((policy_name, content, similarity))
+        for i in I[0]:
+            if i < len(self.policy_names):  # Safety check
+                policy_name = self.policy_names[i]
+                policy_text = self.policy_texts[i]
+                results.append((policy_name, policy_text))
         
-        # Sort by relevance and return top_n
-        results.sort(key=lambda x: x[2], reverse=True)
-        return [(name, content) for name, content, _ in results[:top_n]]
+        return results
     
     def format_for_prompt(self, query):
+        """Format relevant policies for inclusion in the prompt"""
         relevant_policies = self.get_relevant_policies(query)
         
         if not relevant_policies:
@@ -118,34 +129,32 @@ class SimplePolicy:
         formatted_text = "Relevant SkyWay Airlines policies:\n\n"
         
         for policy_name, section in relevant_policies:
-            formatted_text += f"From {policy_name.title()} Policy:\n{section}\n\n"
+            formatted_text += f"From {policy_name.replace('_', ' ').title()} Policy:\n{section}\n\n"
             
         return formatted_text
 
 # Initialize policy retriever
-policy_retriever = SimplePolicy(POLICIES_DIR)
-
-# Convert data to pandas DataFrames
-FLIGHTS_DB = pd.DataFrame(FLIGHTS_DATA)
-CUSTOMERS_DB = pd.DataFrame(CUSTOMERS_DATA)
+policy_retriever = PolicyRetriever(POLICIES)
 
 # Function to get flight status
 def get_flight_status(flight_id):
-    flight = FLIGHTS_DB[FLIGHTS_DB["flight_id"] == flight_id]
-    if flight.empty:
-        return None
-    return flight.iloc[0].to_dict()
+    for flight in FLIGHTS_DATA:
+        if flight["flight_id"] == flight_id:
+            return flight
+    return None
 
 # Function to get customer details
 def get_customer_details(customer_id):
-    customer = CUSTOMERS_DB[CUSTOMERS_DB["customer_id"] == customer_id]
-    if customer.empty:
-        return None
-    customer_data = customer.iloc[0].to_dict()
-    flight_data = get_flight_status(customer_data["flight_id"])
-    return {**customer_data, "flight": flight_data}
+    for customer in CUSTOMERS_DATA:
+        if customer["customer_id"] == customer_id:
+            customer_data = customer.copy()
+            flight_data = get_flight_status(customer_data["flight_id"])
+            if flight_data:
+                customer_data["flight"] = flight_data
+            return customer_data
+    return None
 
-# Function to process chat with AI
+# Process chat messages
 def process_chat(customer_id, user_message, chat_history):
     # Get customer details for personalization
     customer_details = get_customer_details(customer_id) if customer_id else None
@@ -178,7 +187,7 @@ def process_chat(customer_id, user_message, chat_history):
     ]
     
     # Add customer context if available
-    if customer_details:
+    if customer_details and "flight" in customer_details:
         context = f"""
         Customer Information:
         - Name: {customer_details['name']}
@@ -202,15 +211,15 @@ def process_chat(customer_id, user_message, chat_history):
     messages.append({"role": "user", "content": user_message})
     
     try:
-        # Get response from OpenAI
-        response = openai.ChatCompletion.create(
+        # Get response from OpenAI using the new API format
+        response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=500,
             temperature=0.7
         )
         
-        ai_response = response.choices[0].message['content']
+        ai_response = response.choices[0].message.content
         
         # Check if the issue needs escalation
         if "ESCALATE" in ai_response:
@@ -227,13 +236,14 @@ def process_chat(customer_id, user_message, chat_history):
             - Recommended Next Steps:
             """
             
-            summary_response = openai.ChatCompletion.create(
+            # Use the new API format for the summary response
+            summary_response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": summary_prompt}],
                 max_tokens=300
             )
             
-            structured_summary = summary_response.choices[0].message['content']
+            structured_summary = summary_response.choices[0].message.content
             
             return {
                 "response": ai_response.replace("ESCALATE", ""),
@@ -843,4 +853,4 @@ def chat():
 
 # For local development
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
