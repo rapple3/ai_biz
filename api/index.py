@@ -6,6 +6,8 @@ import tempfile
 import faiss
 import numpy as np
 from datetime import datetime
+import sys
+import pkg_resources
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -854,3 +856,51 @@ def chat():
 # For local development
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/debug/size', methods=['GET'])
+def debug_size():
+    # Get sizes of loaded modules
+    module_sizes = {}
+    for name, module in sys.modules.items():
+        if hasattr(module, "__file__") and module.__file__:
+            try:
+                module_sizes[name] = os.path.getsize(module.__file__)
+            except (OSError, AttributeError):
+                module_sizes[name] = 0
+    
+    # Sort by size (largest first)
+    sorted_modules = sorted(module_sizes.items(), key=lambda x: x[1], reverse=True)
+    
+    # Get installed package sizes
+    package_sizes = {}
+    for package in pkg_resources.working_set:
+        try:
+            package_path = os.path.dirname(package.location)
+            package_size = 0
+            for dirpath, dirnames, filenames in os.walk(package.location):
+                for filename in filenames:
+                    file_path = os.path.join(dirpath, filename)
+                    package_size += os.path.getsize(file_path)
+            package_sizes[package.key] = package_size
+        except Exception:
+            package_sizes[package.key] = 0
+    
+    # Sort packages by size
+    sorted_packages = sorted(package_sizes.items(), key=lambda x: x[1], reverse=True)
+    
+    # Convert to human-readable format
+    def human_size(bytes):
+        units = ['B', 'KB', 'MB', 'GB']
+        unit_index = 0
+        while bytes >= 1024 and unit_index < len(units) - 1:
+            bytes /= 1024
+            unit_index += 1
+        return f"{bytes:.2f} {units[unit_index]}"
+    
+    readable_modules = [(name, human_size(size)) for name, size in sorted_modules[:50]]  # Top 50 modules
+    readable_packages = [(name, human_size(size)) for name, size in sorted_packages]
+    
+    return jsonify({
+        "top_modules": readable_modules,
+        "packages": readable_packages
+    })
