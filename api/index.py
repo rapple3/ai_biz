@@ -6,6 +6,7 @@ import tempfile
 from datetime import datetime
 import sys
 import pkg_resources
+import traceback
 
 # Initialize Flask app with correct template folder path
 # For Vercel deployment, we need to use absolute paths
@@ -266,11 +267,21 @@ def process_chat(customer_id, user_message, chat_history):
             "structured_summary": f"System error occurred: {str(e)}"
         }
 
-# Default route to serve the HTML
+# Add error handling for the root route
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        error_message = f"Error rendering template: {str(e)}\n{traceback.format_exc()}"
+        print(error_message)
+        return jsonify({"error": error_message}), 500
+
+# Add a simple health check endpoint
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "ok", "environment": os.environ.get("VERCEL_ENV", "unknown")})
 
 # API route for chat
 @app.route('/api/chat', methods=['POST'])
