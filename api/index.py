@@ -134,8 +134,55 @@ class PolicyRetriever:
             
         return formatted_text
 
-# Initialize policy retriever
-policy_retriever = PolicyRetriever(POLICIES)
+# Make sure this class is defined BEFORE you try to use it
+class SimplePolicyRetriever:
+    def __init__(self, policies):
+        self.policies = policies
+        self.policy_texts = list(policies.values())
+        self.policy_names = list(policies.keys())
+    
+    def get_relevant_policies(self, query, top_n=2):
+        """Find the most relevant policies for a query using keyword matching"""
+        # Simple keyword matching
+        query_words = set(query.lower().split())
+        scores = []
+        
+        for i, policy_text in enumerate(self.policy_texts):
+            policy_words = set(policy_text.lower().split())
+            # Count matching words
+            matching_words = query_words.intersection(policy_words)
+            score = len(matching_words)
+            scores.append((i, score))
+        
+        # Sort by score (highest first)
+        scores.sort(key=lambda x: x[1], reverse=True)
+        
+        # Return top N results
+        results = []
+        for i, score in scores[:top_n]:
+            if score > 0:  # Only include if there's at least one matching word
+                policy_name = self.policy_names[i]
+                policy_text = self.policy_texts[i]
+                results.append((policy_name, policy_text))
+        
+        return results
+    
+    def format_for_prompt(self, query):
+        """Format relevant policies for inclusion in the prompt"""
+        relevant_policies = self.get_relevant_policies(query)
+        
+        if not relevant_policies:
+            return "No specific policy information found for this query."
+        
+        formatted_text = "Relevant SkyWay Airlines policies:\n\n"
+        
+        for policy_name, section in relevant_policies:
+            formatted_text += f"From {policy_name.replace('_', ' ').title()} Policy:\n{section}\n\n"
+            
+        return formatted_text
+
+# Then initialize it AFTER the class is defined
+policy_retriever = SimplePolicyRetriever(POLICIES)
 
 # Function to get flight status
 def get_flight_status(flight_id):
